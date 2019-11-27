@@ -3,7 +3,7 @@ import m from "mithril"
 import SquireEditor from "squire-rte"
 import type {DeferredObject} from "../../api/common/utils/Utils"
 import {defer} from "../../api/common/utils/Utils"
-import {px, size} from "../size"
+import {px} from "../size"
 import {Dialog} from "./Dialog"
 import {isMailAddress} from '../../misc/FormatValidator.js'
 import type {ImageHandler} from '../../mail/MailUtils'
@@ -91,14 +91,9 @@ export class Editor implements ImageHandler {
 	}
 
 	initSquire(domElement: HTMLElement) {
-		let squire = new (SquireEditor: any)(domElement,
-			{
-				sanitizeToDOMFragment: this._sanitizer,
-				blockAttributes: {
-					'style': px(size.font_size_base),
-					'text-align': 'left'
-				}
-			})
+		let squire = new (SquireEditor: any)(domElement, {
+			sanitizeToDOMFragment: this._sanitizer,
+		})
 			.addEventListener('keyup', (e) => {
 				if (e.which === 32) {
 					let blocks = []
