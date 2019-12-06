@@ -14,6 +14,8 @@ import {load, update} from "../api/main/Entity"
 import {isUpdateForTypeRef} from "../api/main/EventController"
 import {UserSettingsGroupRootTypeRef} from "../api/entities/tutanota/UserSettingsGroupRoot"
 import {incrementDate} from "../api/common/utils/DateUtils"
+import type {CalendarViewTypeEnum} from "../calendar/CalendarView"
+import {CalendarViewType} from "../calendar/CalendarView"
 
 
 export class AppearanceSettingsViewer implements UpdatableSettingsViewer {
@@ -73,10 +75,24 @@ export class AppearanceSettingsViewer implements UpdatableSettingsViewer {
 			}
 		}
 
+		const defaultCalendarViewDropDownAttrs: DropDownSelectorAttrs<CalendarViewTypeEnum> = {
+			// TODO: translate
+			label: () => "Default calendar view",
+			items: [
+				{name: lang.get("month_label"), value: CalendarViewType.MONTH},
+				{name: lang.get("agenda_label"), value: CalendarViewType.AGENDA},
+			],
+			selectedValue: stream(deviceConfig.getDefaultCalendarView() || CalendarViewType.MONTH),
+			selectionChangedHandler: (value) => {
+				deviceConfig.setDefaultCalendarView(value)
+			}
+		}
+
 		return m(".fill-absolute.scroll.plr-l.pb-xl", [
 			m(".h4.mt-l", lang.get('settingsForDevice_label')),
 			m(DropDownSelectorN, languageDropDownAttrs),
 			themeId() === 'custom' ? null : m(DropDownSelectorN, themeDropDownAttrs),
+			m(DropDownSelectorN, defaultCalendarViewDropDownAttrs),
 			m(".h4.mt-l", lang.get('userSettings_label')),
 			m(DropDownSelectorN, hourFormatDropDownAttrs),
 			m(DropDownSelectorN, weekStartDropDownAttrs),
