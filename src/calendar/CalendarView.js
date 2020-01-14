@@ -108,7 +108,7 @@ export class CalendarView implements CurrentView {
 	_calendarInvitations: Array<ReceivedGroupInvitation>
 
 	constructor() {
-		this._currentViewType = deviceConfig.getDefaultCalendarView() || CalendarViewType.MONTH
+		this._currentViewType = deviceConfig.getDefaultCalendarView(logins.getUserController().user._id) || CalendarViewType.MONTH
 		this._loadedMonths = new Set()
 		this._eventsForDays = new Map()
 		this._hiddenCalendars = new Set()
@@ -615,7 +615,7 @@ export class CalendarView implements CurrentView {
 		} else {
 			this._currentViewType = CalendarViewTypeByValue[args.view]
 				? args.view
-				: (deviceConfig.getDefaultCalendarView() || CalendarViewType.MONTH)
+				: CalendarViewType.MONTH
 			const urlDateParam = args.date
 			if (urlDateParam && this._currentViewType !== CalendarViewType.AGENDA) {
 				// Unlike JS Luxon assumes local time zone when parsing and not UTC. That's what we want
@@ -629,6 +629,7 @@ export class CalendarView implements CurrentView {
 					m.redraw()
 				}
 			}
+			deviceConfig.setDefaultCalendarView(logins.getUserController().user._id, this._currentViewType)
 		}
 	}
 

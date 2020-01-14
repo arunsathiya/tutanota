@@ -18,7 +18,7 @@ class DeviceConfig {
 	_scheduledAlarmUsers: Id[];
 	_theme: ThemeId;
 	_language: ?string;
-	_defaultCalendarView: ?CalendarViewTypeEnum;
+	_defaultCalendarView: {[uderId: Id]: ?CalendarViewTypeEnum};
 
 	/**
 	 * @param config The config to copy from
@@ -38,7 +38,7 @@ class DeviceConfig {
 		}
 		this._scheduledAlarmUsers = loadedConfig && loadedConfig._scheduledAlarmUsers || []
 		this._language = loadedConfig && loadedConfig._language
-		this._defaultCalendarView = loadedConfig && loadedConfig._defaultCalendarView
+		this._defaultCalendarView = loadedConfig && loadedConfig._defaultCalendarView || {}
 	}
 
 	getStoredAddresses(): string[] {
@@ -124,13 +124,15 @@ class DeviceConfig {
 		}
 	}
 
-	getDefaultCalendarView(): ?CalendarViewTypeEnum {
-		return this._defaultCalendarView
+	getDefaultCalendarView(userId: Id): ?CalendarViewTypeEnum {
+		return this._defaultCalendarView[userId]
 	}
 
-	setDefaultCalendarView(defaultView: CalendarViewTypeEnum) {
-		this._defaultCalendarView = defaultView
-		this._store()
+	setDefaultCalendarView(userId: Id, defaultView: CalendarViewTypeEnum) {
+		if (this._defaultCalendarView[userId] !== defaultView) {
+			this._defaultCalendarView[userId] = defaultView
+			this._store()
+		}
 	}
 }
 
